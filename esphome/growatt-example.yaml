@@ -1,0 +1,41 @@
+# Voorbeeld: Growatt-omvormer via Modbus RTU (SYS COM) met een ESP32-C6-DevKitM-1 en een RS485-module.
+# Kopieer dit bestand per omvormer (bijv. growatt-dak.yaml), pas name/label/api-key aan.
+# Geheimen in secrets.yaml (zie secrets.example.yaml).
+substitutions:
+  label: "Growatt"
+  uart_tx: GPIO4        # -> RXD van de RS485-module
+  uart_rx: GPIO5        # <- TXD van de RS485-module
+  latitude: "52.37"     # alleen voor de dag/nacht-kleur van de status-led
+  longitude: "4.90"
+
+esphome:
+  name: growatt-example
+  friendly_name: "${label}"
+
+esp32:
+  variant: esp32c6
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+logger:
+  hardware_uart: USB_SERIAL_JTAG  # UART0 (GPIO16/17) is voor de RS485-module
+
+api:
+  encryption:
+    key: !secret growatt_api_key
+
+ota:
+  - platform: esphome
+    encryption:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "growatt-example Fallback"
+
+captive_portal:
+
+packages:
+  growatt: !include common/growatt-modbus.yaml

@@ -1,0 +1,282 @@
+# Gedeelde Modbus-sensoren voor Growatt MIN TL-X(H) en vergelijkbare modellen (SYS COM pin 3 = A, pin 4 = B, slave 1).
+# Baudrate: 38400 8N1 (holding 22 = 1); de firmware wisselt zelf naar 9600 als er 90 s geen antwoord komt.
+# Registerkaart 3000..3124 (zie docs/registers.md). Alleen lezen.
+# RS485-module met hardware auto-flow (TTL naar RS485, 3,3 V): geen DE/RE-pin nodig.
+# Module RXD -> C6 TX, module TXD -> C6 RX (pinnen per bordje: substitutions uart_tx/uart_rx), VCC 3,3 V, GND.
+
+uart:
+  id: growatt_uart
+  tx_pin: ${uart_tx}
+  rx_pin: ${uart_rx}
+  baud_rate: 38400
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
+
+modbus:
+  id: growatt_modbus
+  uart_id: growatt_uart
+  send_wait_time: 500ms
+
+modbus_controller:
+  - id: growatt
+    address: 1
+    modbus_id: growatt_modbus
+    update_interval: 10s
+    command_throttle: 500ms
+    max_cmd_retries: 4
+
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "status"
+    id: growatt_status
+    address: 3000
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    on_value:
+      then:
+        - lambda: |-
+            id(modbus_last_ok) = millis();
+            id(modbus_seen) = true;
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV vermogen"
+    address: 3001
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV1 spanning"
+    address: 3003
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV1 stroom"
+    address: 3004
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV1 vermogen"
+    address: 3005
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV2 spanning"
+    address: 3007
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV2 stroom"
+    address: 3008
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "PV2 vermogen"
+    address: 3009
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "AC vermogen"
+    address: 3023
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "netfrequentie"
+    address: 3025
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "Hz"
+    device_class: frequency
+    state_class: measurement
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.01
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "netspanning"
+    address: 3026
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "netstroom"
+    address: 3027
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "energie vandaag"
+    address: 3049
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "energie totaal"
+    address: 3051
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: modbus_controller
+    modbus_controller_id: growatt
+    name: "temperatuur"
+    address: 3093
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+  - platform: wifi_signal
+    name: "wifi signaal"
+    update_interval: 60s
+  - platform: uptime
+    name: "uptime"
+    entity_category: diagnostic
+
+# --- Status-led (WS2812 op GPIO8 van de ESP32-C6-DevKitM-1) ------------------
+# groen = wifi en Modbus ok, oranje = Modbus ok maar geen wifi, rood = geen Modbus-antwoord
+# (of geen wifi en geen Modbus). 's Nachts slaapt de omvormer: dan zacht blauw als wifi ok is,
+# zodat een slapende omvormer niet als storing wordt getoond.
+globals:
+  - id: modbus_last_ok
+    type: uint32_t
+    initial_value: "0"
+  - id: baud_alt
+    type: bool
+    initial_value: "false"
+  - id: modbus_seen
+    type: bool
+    initial_value: "false"
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
+sun:
+  id: zon
+  latitude: ${latitude}
+  longitude: ${longitude}
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: status_led
+    name: "status-led"
+    internal: true
+    pin: GPIO8
+    num_leds: 1
+    chipset: WS2812
+    rgb_order: GRB
+    rmt_symbols: 48
+    default_transition_length: 0s
+
+interval:
+  # Geen Modbus-antwoord gedurende 90 s: wissel tussen 38400 en 9600 baud (omvormer kan van snelheid wisselen).
+  - interval: 90s
+    then:
+      - lambda: |-
+          bool modbus_ok = id(modbus_seen) && (millis() - id(modbus_last_ok) < 60000);
+          if (!modbus_ok) {
+            id(baud_alt) = !id(baud_alt);
+            id(growatt_uart).set_baud_rate(id(baud_alt) ? 9600 : 38400);
+            id(growatt_uart).load_settings(false);
+            ESP_LOGW("growatt", "Geen antwoord: baudrate nu %d", id(baud_alt) ? 9600 : 38400);
+          }
+  - interval: 2s
+    then:
+      - lambda: |-
+          bool wifi_ok = wifi::global_wifi_component->is_connected();
+          bool modbus_ok = id(modbus_seen) && (millis() - id(modbus_last_ok) < 60000);
+          bool night = id(ha_time).now().is_valid() && id(zon).elevation() < 3.0;
+          float r = 1, g = 0, b = 0;
+          if (night && wifi_ok && !modbus_ok) { r = 0; g = 0; b = 1; }
+          else if (modbus_ok && wifi_ok) { r = 0; g = 1; b = 0; }
+          else if (modbus_ok) { r = 1; g = 0.45; b = 0; }
+          auto call = id(status_led).make_call();
+          call.set_state(true);
+          call.set_rgb(r, g, b);
+          call.set_brightness(0.25);
+          call.set_transition_length(0);
+          call.perform();

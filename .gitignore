@@ -1,0 +1,5 @@
+esphome/secrets.yaml
+secrets.yaml
+.esphome/
+__pycache__/
+*.log
