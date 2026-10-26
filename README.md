@@ -47,6 +47,12 @@ Controleer de volgorde van de pinnen op de print zelf; die verschilt per verkope
 Gebruik je de ESPHome Builder in Home Assistant, zet dan dezelfde bestanden in `/config/esphome/` (inclusief `common/`).
 Een oudere kopie daar wordt anders bij een update weer op het bordje gezet.
 
+## Behuizing (3D-print)
+
+[`hardware/growatt_C6_box.stl`](hardware/growatt_C6_box.stl) is een printbare behuizing voor het ESP32-C6-bordje met de
+RS485-module (ongeveer 60 × 60 × 35 mm). Print hem in PLA of PETG en controleer eerst of je bordje en module erin passen,
+want de maten van de modules verschillen per verkoper.
+
 ## Statusled
 
 De ingebouwde WS2812 (GPIO8) laat de toestand zien:
