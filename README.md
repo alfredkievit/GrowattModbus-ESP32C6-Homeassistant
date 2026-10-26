@@ -53,6 +53,8 @@ Een oudere kopie daar wordt anders bij een update weer op het bordje gezet.
 RS485-module (ongeveer 60 × 60 × 35 mm). Print hem in PLA of PETG en controleer eerst of je bordje en module erin passen,
 want de maten van de modules verschillen per verkoper.
 
+![Behuizing](docs/behuizing.png)
+
 ## Statusled
 
 De ingebouwde WS2812 (GPIO8) laat de toestand zien:
