@@ -11,9 +11,16 @@ Een Growatt-omvormer (MIN TL-X / TL-XH, getest op een 3600TL-X en een MIN 4600TL
 | Onderdeel | Opmerking |
 |---|---|
 | ESP32-C6-DevKitM-1 | andere ESP32-varianten kunnen ook, pas `variant` en pinnen aan |
-| RS485-module met automatische richting (TTL ↔ RS485, 3,3 V) | geen DE/RE-pin nodig |
+| RS485-module met automatische richting (TTL ↔ RS485, 3,3 V) | geen DE/RE-pin nodig; zie hieronder |
 | Kabel naar de **SYS COM**-aansluiting van de omvormer | pin 3 = A, pin 4 = B |
 | Home Assistant met ESPHome | de ESPHome-integratie ontdekt het bordje vanzelf |
+
+### De RS485-module
+
+Een goedkoop blauw TTL-naar-RS485-printje (MAX485-type met automatische richtingsschakeling), met aan de ene kant een
+schroefklem **A+ / B−** (naar de omvormer) en aan de andere kant de TTL-aansluiting (4-pins JST-stekker of pinnen) met
+**VCC, TXD, RXD, GND** (naar de ESP32). Er zitten twee ledjes op (TXD/RXD): het RXD-ledje knippert als de omvormer antwoordt.
+Controleer de volgorde van de pinnen op de print zelf; die verschilt per verkoper.
 
 ## Bedrading (kort, zie [docs/bedrading.md](docs/bedrading.md))
 
